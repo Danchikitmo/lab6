@@ -2,19 +2,20 @@ package Data;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
 public class Person implements Serializable {
     @Serial
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 5760575944040770153L;
 
     private String name; //Поле не может быть null, Строка не может быть пустой
     private String birthday; //Поле не может быть null
     private Double height; //Поле может быть null, Значение поля должно быть больше 0
     private String passportID; //Значение этого поля должно быть уникальным, Поле не может быть null
 
-    public Person(String name, String birthday, Double height) {
+    public Person(String name, String birthday, Double height, String passportID) {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("Name cannot be null or empty");
         }
@@ -28,10 +29,13 @@ public class Person implements Serializable {
         this.name = name;
         this.birthday = birthday;
         this.height = height;
-        this.passportID = generatePassportId();
+        this.passportID = passportID;
     }
 
-    public Person() {
+    public Person(String authorName, LocalDateTime birthday, Double height, String passportID) {
+        this.name = authorName;
+        this.birthday = birthday.toString();
+        this.height = height;
         this.passportID = generatePassportId();
     }
 

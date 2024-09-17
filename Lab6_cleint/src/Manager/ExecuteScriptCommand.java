@@ -9,193 +9,161 @@ import server.Server;
 import Exception.*;
 
 
-import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.Scanner;
 
+
 public class ExecuteScriptCommand {
-    public static void  execute(String line) throws Exception{
+
+    public static void execute(String line) throws Exception {
         Request request = new Request(null);
         String filePath = line.split(" ")[1];
 
         try {
-            Scanner scanner = new Scanner(new File(filePath));
+            Scanner scanner = new Scanner(new FileReader(filePath));
             Server client = new Server();
             while (scanner.hasNextLine()) {
                 String command = scanner.nextLine();
                 request.setMessage(command);
 
                 if (command.equals("add")) {
+                    // Ввод имени LabWork
                     String name = scanner.nextLine();
-                    Long coordinatesX = Long.valueOf(scanner.nextLine());
-                    Long cordinatesY = Long.valueOf(scanner.nextLine());
-                    Coordinates coordinates = new Coordinates(coordinatesX, cordinatesY);
-                    Integer minimalPoints = Integer.valueOf(scanner.nextLine());
+
+                    // Ввод координат
+                    Long coordinateX = Long.valueOf(scanner.nextLine());
+                    Long coordinateY = Long.valueOf(scanner.nextLine());
+                    Coordinates coordinates = new Coordinates(coordinateX, coordinateY);
+
+                    // Ввод минимальной оценки
+                    Integer minimalPoint = Integer.valueOf(scanner.nextLine());
+
+                    // Ввод описания
                     String description = scanner.nextLine();
-                    Long averagePoints = Long.valueOf(scanner.nextLine());
+
+                    // Ввод среднего значения
+                    Long averagePoint = Long.valueOf(scanner.nextLine());
+
+                    // Ввод сложности
                     Difficulty difficulty = Difficulty.valueOf(scanner.nextLine());
 
-                    Person person = new Person();
+                    // Создание объекта Person (автора LabWork)
+                    String birthday = null;
+                    Double height = null;
+                    String passportID = null;
+                    Person author = new Person(name, birthday, height, passportID);
 
-                    String namePerson = scanner.nextLine();
-                    ZonedDateTime birthDate = ZonedDateTime.parse(scanner.nextLine());
-                    Double height = Double.valueOf(scanner.nextLine());
+                    // Ввод имени автора
+                    String authorName = scanner.nextLine();
+                    author.setName(authorName);
 
-                    person.setName(namePerson);
-                    person.setBirthday(String.valueOf(birthDate));
-                    person.setHeight(height);
+                    // Ввод даты рождения автора
+                    birthday = scanner.nextLine();
+                    author.setBirthday(birthday);
 
+                    // Ввод роста автора
+                    height = Double.valueOf(scanner.nextLine());
+                    author.setHeight(height);
+
+                    // Ввод паспортного ID автора
+                    passportID = scanner.nextLine();
+                    author.setPassportID(passportID);
+
+                    // Создание объекта LabWork
                     LabWork labWork = new LabWork();
                     labWork.setName(name);
                     labWork.setCoordinates(coordinates);
-                    labWork.setMinimalPoint(minimalPoints);
+                    labWork.setMinimalPoint(minimalPoint);
                     labWork.setDescription(description);
-                    labWork.setAveragePoint(averagePoints);
+                    labWork.setAveragePoint(averagePoint);
                     labWork.setDifficulty(difficulty);
+                    labWork.setAuthor(author);
 
+                    // Генерация и установка времени создания
+                    labWork.setCreationDate(ZonedDateTime.now());
+
+                    // Установка сообщения запроса и передачи объекта labWork
                     request.setMessage("add");
                     request.setLabWork(labWork);
                 } else if (command.equals("update")) {
-                    Integer nededId = Integer.valueOf(scanner.nextLine());
-                    String name = scanner.nextLine();
-                    Long coordinatesX = Long.valueOf(scanner.nextLine());
-                    Long cordinatesY = Long.valueOf(scanner.nextLine());
-                    Coordinates coordinates = new Coordinates(coordinatesX, cordinatesY);
-                    Integer minimalPoints = Integer.valueOf(scanner.nextLine());
-                    String description = scanner.nextLine();
-                    Long averagePoints = Long.valueOf(scanner.nextLine());
-                    Difficulty difficulty = Difficulty.valueOf(scanner.nextLine());
+                    long neededId = Long.parseLong(scanner.nextLine());
+                    LabWork updatedLabWork = createLabWork(scanner);
+                    request.setMessage("update " + neededId);
+                    request.setLabWork(updatedLabWork);
 
-                    Person person = new Person();
 
-                    String namePerson = scanner.nextLine();
-                    ZonedDateTime birthDate = ZonedDateTime.parse(scanner.nextLine());
-                    Double height = Double.valueOf(scanner.nextLine());
-
-                    person.setName(namePerson);
-                    person.setBirthday(String.valueOf(birthDate));
-                    person.setHeight(height);
-
-                    LabWork labWork = new LabWork();
-                    labWork.setName(name);
-                    labWork.setCoordinates(coordinates);
-                    labWork.setMinimalPoint(minimalPoints);
-                    labWork.setDescription(description);
-                    labWork.setAveragePoint(averagePoints);
-                    labWork.setDifficulty(difficulty);
-
-                    request.setMessage("update " + nededId);
-                    request.setLabWork(labWork);
-                } else if (command.equals("add_if_min")) {
-                    String name = scanner.nextLine();
-                    Long coordinatesX = Long.valueOf(scanner.nextLine());
-                    Long cordinatesY = Long.valueOf(scanner.nextLine());
-                    Coordinates coordinates = new Coordinates(coordinatesX, cordinatesY);
-                    Integer minimalPoints = Integer.valueOf(scanner.nextLine());
-                    String description = scanner.nextLine();
-                    Long averagePoints = Long.valueOf(scanner.nextLine());
-                    Difficulty difficulty = Difficulty.valueOf(scanner.nextLine());
-
-                    Person person = new Person();
-
-                    String namePerson = scanner.nextLine();
-                    ZonedDateTime birthDate = ZonedDateTime.parse(scanner.nextLine());
-                    Double height = Double.valueOf(scanner.nextLine());
-
-                    person.setName(namePerson);
-                    person.setBirthday(String.valueOf(birthDate));
-                    person.setHeight(height);
-
-                    LabWork labWork = new LabWork();
-                    labWork.setName(name);
-                    labWork.setCoordinates(coordinates);
-                    labWork.setMinimalPoint(minimalPoints);
-                    labWork.setDescription(description);
-                    labWork.setAveragePoint(averagePoints);
-                    labWork.setDifficulty(difficulty);
-
-                    request.setMessage("add_if_min");
-                    request.setLabWork(labWork);
-                } else if (command.equals("remove_greater")) {
-                    String name = scanner.nextLine();
-                    Long coordinatesX = Long.valueOf(scanner.nextLine());
-                    Long cordinatesY = Long.valueOf(scanner.nextLine());
-                    Coordinates coordinates = new Coordinates(coordinatesX, cordinatesY);
-                    Integer minimalPoints = Integer.valueOf(scanner.nextLine());
-                    String description = scanner.nextLine();
-                    Long averagePoints = Long.valueOf(scanner.nextLine());
-                    Difficulty difficulty = Difficulty.valueOf(scanner.nextLine());
-
-                    Person person = new Person();
-
-                    String namePerson = scanner.nextLine();
-                    ZonedDateTime birthDate = ZonedDateTime.parse(scanner.nextLine());
-                    Double height = Double.valueOf(scanner.nextLine());
-
-                    person.setName(namePerson);
-                    person.setBirthday(String.valueOf(birthDate));
-                    person.setHeight(height);
-
-                    LabWork labWork_param = new LabWork();
-                    labWork_param.setName(name);
-                    labWork_param.setCoordinates(coordinates);
-                    labWork_param.setMinimalPoint(minimalPoints);
-                    labWork_param.setDescription(description);
-                    labWork_param.setAveragePoint(averagePoints);
-                    labWork_param.setDifficulty(difficulty);
-
-                    request.setLabWork(labWork_param);
-                    request.setMessage("remove_greater");
-                } else if (command.equals("remove_lower")) {
-                    String name = scanner.nextLine();
-                    Long coordinatesX = Long.valueOf(scanner.nextLine());
-                    Long cordinatesY = Long.valueOf(scanner.nextLine());
-                    Coordinates coordinates = new Coordinates(coordinatesX, cordinatesY);
-                    Integer minimalPoints = Integer.valueOf(scanner.nextLine());
-                    String description = scanner.nextLine();
-                    Long averagePoints = Long.valueOf(scanner.nextLine());
-                    Difficulty difficulty = Difficulty.valueOf(scanner.nextLine());
-
-                    Person person = new Person();
-
-                    String namePerson = scanner.nextLine();
-                    ZonedDateTime birthDate = ZonedDateTime.parse(scanner.nextLine());
-                    Double height = Double.valueOf(scanner.nextLine());
-
-                    person.setName(namePerson);
-                    person.setBirthday(String.valueOf(birthDate));
-                    person.setHeight(height);
-
-                    LabWork labWork_param = new LabWork();
-                    labWork_param.setName(name);
-                    labWork_param.setCoordinates(coordinates);
-                    labWork_param.setMinimalPoint(minimalPoints);
-                    labWork_param.setDescription(description);
-                    labWork_param.setAveragePoint(averagePoints);
-                    labWork_param.setDifficulty(difficulty);
-
-                    request.setLabWork(labWork_param);
-                    request.setMessage("remove_lower");
                 } else if (command.equals("exit")) {
                     System.exit(1);
-                } else if (command.equals("execute_script_command " + filePath)) {
+
+                } else if (command.equals("execute_script " + filePath)) {
+                    System.out.println(filePath);
                     throw new WrongInputException();
                 }
+
                 System.out.println(client.senMessage(request));
             }
         } catch (FileNotFoundException e) {
-            System.err.println("Файл не найден");
-        } catch (Exception e){
-            System.err.println("Wrong input data");
+            e.printStackTrace();
+            System.out.println("file not found");
+        } catch (Exception e) {
+            System.out.println("Wrong input data");
         }
     }
 
-    public String getName(){
+    /**
+     * Создание объекта LabWork из данных, считанных из файла
+     */
+    private static LabWork createLabWork(Scanner scanner) {
+        String name = scanner.nextLine(); // Чтение имени
+        double x = Double.parseDouble(scanner.nextLine()); // Чтение координаты X
+        double y = Double.parseDouble(scanner.nextLine()); // Чтение координаты Y
+        Coordinates coordinates = new Coordinates((long) x, (long) y); // Создание объекта координат
+
+        long minimalPoint = Long.parseLong(scanner.nextLine()); // Чтение минимального балла
+        String description = scanner.nextLine(); // Чтение описания
+        int averagePoint = Integer.parseInt(scanner.nextLine()); // Чтение среднего балла
+
+        // Чтение сложности, если она есть, иначе устанавливаем null
+        Difficulty difficulty = null;
+        String difficultyStr = scanner.nextLine();
+        if (!difficultyStr.isEmpty()) {
+            difficulty = Difficulty.valueOf(difficultyStr);
+        }
+
+        // Чтение данных автора
+        String authorName = scanner.nextLine();
+        LocalDateTime birthday = LocalDateTime.parse(scanner.nextLine()); // Дата рождения
+        Double height = null;
+        String heightStr = scanner.nextLine();
+        if (!heightStr.isEmpty()) {
+            height = Double.parseDouble(heightStr);
+        }
+        String passportID = scanner.nextLine(); // Паспортный ID
+
+        Person author = new Person(authorName, birthday, height, passportID); // Создание объекта автора
+
+        // Создание и возвращение объекта LabWork
+        LabWork labWork = new LabWork();
+        labWork.setName(name);
+        labWork.setCoordinates(coordinates);
+        labWork.setCreationDate(ZonedDateTime.from(LocalDateTime.now())); // Дата создания генерируется автоматически
+        labWork.setMinimalPoint((int) minimalPoint);
+        labWork.setDescription(description);
+        labWork.setAveragePoint(averagePoint);
+        labWork.setDifficulty(difficulty);
+        labWork.setAuthor(author);
+
+        return labWork;
+    }
+
+    public String getName() {
         return "execute_script_command";
     }
 
-    public String getDescription(){
-        return "считать и исполнить скрипт из указанного файла. В скрипте содержаться в таком же виде, в котором их вводит ползователь";
+    public String getDescription() {
+        return "считать и исполнить скрипт из указанного файла. В скрипте содержатся команды в таком же виде, в котором их вводит пользователь в интерактивном режиме";
     }
 }

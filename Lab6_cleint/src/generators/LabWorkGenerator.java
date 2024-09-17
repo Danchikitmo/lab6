@@ -6,34 +6,41 @@ import Data.LabWork;
 import Data.Person;
 import Exception.*;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
 import java.util.Scanner;
 
 public class LabWorkGenerator {
-    public static LabWork createLabWork() throws WrongInputException{
+    public static LabWork createLabWork() throws WrongInputException {
         LabWork labWork = new LabWork();
         String input;
         long x1;
         long y1;
         Coordinates coordinates;
+        String name;
+        String birthday;
+        Double height;
+        String passportID;
+        Person person;
         Scanner scanner = new Scanner(System.in);
 
+        // Ввод имени LabWork
         while (true) {
             System.out.println("Введите название: ");
             try {
-                input = String.valueOf(scanner.nextLine());
-                if (input.isEmpty() | input.equals(null)){
+                input = scanner.nextLine();
+                if (input.isEmpty()) {
                     throw new WrongInputException();
                 }
                 labWork.setName(input);
                 break;
             } catch (Exception e) {
-                System.err.println("Неверный ввод: " + scanner.nextLine());
+                System.err.println("Неверный ввод: ");
             }
         }
 
+        // Ввод координат X и Y
         while (true) {
-            System.out.println("Введите координату x");
+            System.out.println("Введите координату x:");
             try {
                 input = scanner.nextLine();
                 x1 = Long.parseLong(input);
@@ -44,7 +51,7 @@ public class LabWorkGenerator {
         }
 
         while (true) {
-            System.out.println("Введите координату y");
+            System.out.println("Введите координату y:");
             try {
                 input = scanner.nextLine();
                 y1 = Long.parseLong(input);
@@ -54,13 +61,12 @@ public class LabWorkGenerator {
             }
         }
 
-        coordinates = new Coordinates(0, 0);
-        coordinates.setX(x1);
-        coordinates.setY(y1);
+        coordinates = new Coordinates(x1, y1);
         labWork.setCoordinates(coordinates);
 
-        while (true){
-            System.out.println("Введите минимальную оценку: ");
+        // Ввод минимальной оценки
+        while (true) {
+            System.out.println("Введите минимальную оценку:");
             try {
                 input = scanner.nextLine();
                 labWork.setMinimalPoint(Integer.parseInt(input));
@@ -70,7 +76,8 @@ public class LabWorkGenerator {
             }
         }
 
-        while (true){
+        // Ввод описания
+        while (true) {
             System.out.println("Введите описание:");
             try {
                 input = scanner.nextLine();
@@ -81,7 +88,8 @@ public class LabWorkGenerator {
             }
         }
 
-        while (true){
+        // Ввод среднего значения
+        while (true) {
             System.out.println("Введите среднее значение:");
             try {
                 input = scanner.nextLine();
@@ -92,7 +100,8 @@ public class LabWorkGenerator {
             }
         }
 
-        while (true){
+        // Ввод сложности
+        while (true) {
             System.out.println("Введите сложность:");
             try {
                 input = scanner.nextLine();
@@ -103,57 +112,59 @@ public class LabWorkGenerator {
             }
         }
 
-        Person person = new Person();
 
-        while (true){
-            System.out.println("Введите имя");
+        // Ввод имени автора
+        while (true) {
+            System.out.println("Введите имя автора:");
             try {
-                input = scanner.nextLine();
-                person.setName(input);
-                break;
+                name = scanner.nextLine();
+                if (!(name.isEmpty())) {
+                    break;
+                }else {
+                    System.out.println("xcvb");
+                }
             } catch (Exception e) {
-                System.out.println("Неверный ввод: " + input);
+                System.err.println("Неверный ввод: " + input);
             }
         }
 
-        while (true){
-            System.out.println("Введите дату рождения");
+        // Ввод даты рождения автора
+        while (true) {
+            System.out.println("Введите дату рождения автора (yyyy-MM-dd):");
             try {
                 input = scanner.nextLine();
-                person.setBirthday(input);
+                birthday = String.valueOf(LocalDate.parse(input)); // Используем LocalDate для даты
                 break;
             } catch (Exception e) {
                 System.err.println("Неверный ввод: " + input);
             }
         }
 
-        while (true){
-            System.out.println("Введите вес");
+        // Ввод роста автора
+        while (true) {
+            System.out.println("Введите рост автора:");
             try {
                 input = scanner.nextLine();
-                person.setHeight(Double.valueOf(input));
+                height = Double.parseDouble(input);
                 break;
             } catch (Exception e) {
                 System.err.println("Неверный ввод: " + input);
             }
         }
 
-        labWork.setAuthor(person);
-        return labWork;
-    }
+        // Ввод паспорта автора
+        while (true) {
+            System.out.println("Введите паспортный ID автора:");
+            try {
+                passportID = scanner.nextLine();
+                break;
+            } catch (Exception e) {
+                System.err.println("Неверный ввод: " + input);
+            }
+        }
+        System.out.println(name);
+        person = new Person(name, birthday, height, passportID);
 
-    public static LabWork createLabWork(Integer id, String name, Long coordinateX, Long coordinateY,
-                                        Integer minimalPoint, String description, Long avaragePoint, Difficulty difficulty,
-                                        Person person) throws WrongInputException{
-        LabWork labWork = new LabWork();
-        labWork.setId(labWork.generateID());
-        labWork.setName(name);
-        labWork.getCoordinates().setX(coordinateX);
-        labWork.getCoordinates().setY(coordinateY);
-        labWork.setMinimalPoint(minimalPoint);
-        labWork.setDescription(description);
-        labWork.setAveragePoint(avaragePoint);
-        labWork.setDifficulty(difficulty);
         labWork.setAuthor(person);
         return labWork;
     }

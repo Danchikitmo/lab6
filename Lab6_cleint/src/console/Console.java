@@ -24,7 +24,7 @@ public class Console {
                 request = new Request(input);
                 Server server = new Server();
 
-                if(input.equals("add") || input.equals("add_if_min") || input.equals("remove_greater") || input.equals("remove_lower")) {
+                if(input.equals("add")){
                     LabWork labWork = LabWorkGenerator.createLabWork();
                     request.setLabWork(labWork);
                 } else if(input.split(" ")[0].equals("update")) {
@@ -42,7 +42,7 @@ public class Console {
                     LabWork labWork = LabWorkGenerator.createLabWork();
                     request.setLabWork(labWork);
                 }
-                if(input.equals("execute_script_command")) {
+                if (input.split(" ")[0].equals("execute_script")) {
                     ExecuteScriptCommand.execute(request.getMessage());
                 } else {
                     String echo = server.senMessage(request);
